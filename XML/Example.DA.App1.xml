@@ -1,0 +1,609 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ManagementPack SchemaVersion="2.0" ContentReadable="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Manifest>
+    <Identity>
+      <ID>Example.DA.App1</ID>
+      <Version>1.0.0.10</Version>
+    </Identity>
+    <Name>Example Distributed Application - App 1</Name>
+    <References>
+      <Reference Alias="MSCL">
+        <ID>Microsoft.SQLServer.Core.Library</ID>
+        <Version>7.8.4.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="SC">
+        <ID>Microsoft.SystemCenter.Library</ID>
+        <Version>7.0.8437.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Windows">
+        <ID>Microsoft.Windows.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="Health">
+        <ID>System.Health.Library</ID>
+        <Version>7.0.8437.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+      <Reference Alias="System">
+        <ID>System.Library</ID>
+        <Version>7.5.8501.0</Version>
+        <PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+      </Reference>
+    </References>
+  </Manifest>
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="Example.DA.App1.ApplicationServer.Class" Base="System!System.LocalApplication" Accessibility="Public" Abstract="false" Hosted="true" Singleton="false">
+          <Property ID="Version" Key="false" Type="string" />
+        </ClassType>
+        <ClassType ID="Example.DA.App1.ApplicationServer.Group" Base="System!System.Group" Accessibility="Public" Abstract="false" Hosted="false" Singleton="true" />
+        <ClassType ID="Example.DA.App1.Databases.Group" Base="System!System.Group" Accessibility="Public" Abstract="false" Hosted="false" Singleton="true" />
+        <ClassType ID="Example.DA.App1.Class" Base="System!System.Service" Accessibility="Public" Abstract="false" Hosted="false" Singleton="true" />
+      </ClassTypes>
+      <RelationshipTypes>
+        <RelationshipType ID="App_Wader2.WindowsComputerHostsApplication" Base="System!System.Hosting" Abstract="false" Accessibility="Internal">
+          <Source ID="Source" Type="Windows!Microsoft.Windows.Computer" />
+          <Target ID="Target" Type="Example.DA.App1.ApplicationServer.Class" />
+        </RelationshipType>
+        <RelationshipType ID="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers" Base="System!System.Containment" Abstract="false" Accessibility="Public">
+          <Source ID="Source" Type="Example.DA.App1.ApplicationServer.Group" />
+          <Target ID="Target" Type="Example.DA.App1.ApplicationServer.Class" />
+        </RelationshipType>
+        <RelationshipType ID="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup" Base="System!System.Containment" Abstract="false" Accessibility="Public">
+          <Source ID="Source" Type="Example.DA.App1.Class" />
+          <Target ID="Target" Type="Example.DA.App1.ApplicationServer.Group" />
+        </RelationshipType>
+        <RelationshipType ID="Example.DA.App1.Class.contains.ComponentGroup.Databases" Base="System!System.Containment" Abstract="false" Accessibility="Public">
+          <Source ID="Source" Type="Example.DA.App1.Class" />
+          <Target ID="Target" Type="Example.DA.App1.Databases.Group" />
+        </RelationshipType>
+        <RelationshipType ID="Example.DA.App1.DatabasesGroup.contains.Databases" Base="System!System.Containment" Abstract="false" Accessibility="Public">
+          <Source ID="Source" Type="Example.DA.App1.Databases.Group" />
+          <Target ID="Target" Type="MSCL!Microsoft.SQLServer.Core.Database" />
+        </RelationshipType>
+      </RelationshipTypes>
+    </EntityTypes>
+    <MonitorTypes>
+      <UnitMonitorType ID="Microsoft.Windows.CheckNTServiceStateWithBusinessHoursMonitorType" Accessibility="Public">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="Running" />
+          <MonitorTypeState ID="NotRunning" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="ServiceName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="CheckStartupType" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="From" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="To" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="Days" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+          <OverrideableParameter ID="From" Selector="$Config/From$" ParameterType="string" />
+          <OverrideableParameter ID="To" Selector="$Config/To$" ParameterType="string" />
+          <OverrideableParameter ID="Days" Selector="$Config/Days$" ParameterType="int" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.Win32ServiceInformationProvider">
+              <ComputerName>$Config/ComputerName$</ComputerName>
+              <ServiceName>$Config/ServiceName$</ServiceName>
+              <Frequency>30</Frequency>
+              <CheckStartupType>$Config/CheckStartupType$</CheckStartupType>
+            </DataSource>
+            <ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.Win32ServiceInformationProbe">
+              <ComputerName>$Config/ComputerName$</ComputerName>
+              <ServiceName>$Config/ServiceName$</ServiceName>
+            </ProbeAction>
+            <ConditionDetection ID="ServiceRunning" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <Or>
+                  <Expression>
+                    <And>
+                      <Expression>
+                        <SimpleExpression>
+                          <ValueExpression>
+                            <Value Type="String">$Config/CheckStartupType$</Value>
+                          </ValueExpression>
+                          <Operator>NotEqual</Operator>
+                          <ValueExpression>
+                            <Value Type="String">false</Value>
+                          </ValueExpression>
+                        </SimpleExpression>
+                      </Expression>
+                      <Expression>
+                        <SimpleExpression>
+                          <ValueExpression>
+                            <XPathQuery Type="Integer">Property[@Name='StartMode']</XPathQuery>
+                          </ValueExpression>
+                          <Operator>NotEqual</Operator>
+                          <ValueExpression>
+                            <Value Type="Integer">2</Value>
+                          </ValueExpression>
+                        </SimpleExpression>
+                      </Expression>
+                    </And>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Integer">Property[@Name='State']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>Equal</Operator>
+                      <ValueExpression>
+                        <Value Type="Integer">4</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </Or>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="ServiceNotRunning" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <And>
+                  <Expression>
+                    <Or>
+                      <Expression>
+                        <SimpleExpression>
+                          <ValueExpression>
+                            <XPathQuery Type="Integer">Property[@Name='StartMode']</XPathQuery>
+                          </ValueExpression>
+                          <Operator>Equal</Operator>
+                          <ValueExpression>
+                            <Value Type="Integer">2</Value>
+                          </ValueExpression>
+                        </SimpleExpression>
+                      </Expression>
+                      <Expression>
+                        <And>
+                          <Expression>
+                            <SimpleExpression>
+                              <ValueExpression>
+                                <Value Type="String">$Config/CheckStartupType$</Value>
+                              </ValueExpression>
+                              <Operator>Equal</Operator>
+                              <ValueExpression>
+                                <Value Type="String">false</Value>
+                              </ValueExpression>
+                            </SimpleExpression>
+                          </Expression>
+                          <Expression>
+                            <SimpleExpression>
+                              <ValueExpression>
+                                <XPathQuery Type="Integer">Property[@Name='StartMode']</XPathQuery>
+                              </ValueExpression>
+                              <Operator>NotEqual</Operator>
+                              <ValueExpression>
+                                <Value Type="Integer">2</Value>
+                              </ValueExpression>
+                            </SimpleExpression>
+                          </Expression>
+                        </And>
+                      </Expression>
+                    </Or>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Integer">Property[@Name='State']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>NotEqual</Operator>
+                      <ValueExpression>
+                        <Value Type="Integer">4</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </And>
+              </Expression>
+              <SuppressionSettings>
+                <MatchCount>2</MatchCount>
+              </SuppressionSettings>
+            </ConditionDetection>
+            <ConditionDetection ID="Filter" TypeID="System!System.SchedulerFilter">
+              <SchedulerFilter>
+                <ProcessDataMode>OnSchedule</ProcessDataMode>
+                <Schedule>
+                  <WeeklySchedule>
+                    <Windows>
+                      <Daily>
+                        <Start>$Config/From$</Start>
+                        <End>$Config/To$</End>
+                        <DaysOfWeekMask>$Config/Days$</DaysOfWeekMask>
+                      </Daily>
+                    </Windows>
+                  </WeeklySchedule>
+                  <ExcludeDates />
+                </Schedule>
+                <UseCurrentTime>true</UseCurrentTime>
+              </SchedulerFilter>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="Running">
+              <Node ID="ServiceRunning">
+                <Node ID="DS" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="NotRunning">
+              <Node ID="ServiceNotRunning">
+                <Node ID="Filter">
+                  <Node ID="DS" />
+                </Node>
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+          <OnDemandDetections>
+            <OnDemandDetection MonitorTypeStateID="Running">
+              <Node ID="ServiceRunning">
+                <Node ID="Probe" />
+              </Node>
+            </OnDemandDetection>
+            <OnDemandDetection MonitorTypeStateID="NotRunning">
+              <Node ID="ServiceNotRunning">
+                <Node ID="Probe" />
+              </Node>
+            </OnDemandDetection>
+          </OnDemandDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="Example.DA.App1.ApplicationServer.Class.Discovery" Target="Windows!Microsoft.Windows.Server.OperatingSystem" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="Example.DA.App1.ApplicationServer.Class" />
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.FilteredRegistryDiscoveryProvider">
+          <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName>
+          <RegistryAttributeDefinitions>
+            <RegistryAttributeDefinition>
+              <AttributeName>SeedExists</AttributeName>
+              <Path>SOFTWARE\SCOMDiscoveryData\App1</Path>
+              <PathType>0</PathType>
+              <AttributeType>0</AttributeType>
+            </RegistryAttributeDefinition>
+            <RegistryAttributeDefinition>
+              <AttributeName>Version</AttributeName>
+              <Path>SOFTWARE\SCOMDiscoveryData\App1\Version</Path>
+              <PathType>1</PathType>
+              <AttributeType>1</AttributeType>
+            </RegistryAttributeDefinition>
+          </RegistryAttributeDefinitions>
+          <Frequency>3600</Frequency>
+          <ClassId>$MPElement[Name="Example.DA.App1.ApplicationServer.Class"]$</ClassId>
+          <InstanceSettings>
+            <Settings>
+              <Setting>
+                <Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+                <Value>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
+              </Setting>
+              <Setting>
+                <Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
+                <Value>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
+              </Setting>
+              <Setting>
+                <Name>$MPElement[Name="Example.DA.App1.ApplicationServer.Class"]/Version$</Name>
+                <Value>$Data/Values/Version$</Value>
+              </Setting>
+            </Settings>
+          </InstanceSettings>
+          <Expression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="String">Values/SeedExists</XPathQuery>
+              </ValueExpression>
+              <Operator>Equal</Operator>
+              <ValueExpression>
+                <Value Type="String">True</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </Expression>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers.Discovery" Target="Example.DA.App1.ApplicationServer.Group" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="Example.DA.App1.ApplicationServer.Class" />
+          <DiscoveryRelationship TypeID="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers" />
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$Target/Id$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="Example.DA.App1.ApplicationServer.Class"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers"]$</RelationshipClass>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="Example.DA.App1.Class.Contains.ApplicationServersComponentGroup.Discovery" Target="Example.DA.App1.Class" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="Example.DA.App1.ApplicationServer.Group" />
+          <DiscoveryRelationship TypeID="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup" />
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$Target/Id$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="Example.DA.App1.ApplicationServer.Group"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup"]$</RelationshipClass>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="Example.DA.App1.Class.Contains.DatabasesGroupComponentGroup.Discovery" Target="Example.DA.App1.Class" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="Example.DA.App1.Databases.Group" />
+          <DiscoveryRelationship TypeID="Example.DA.App1.Class.contains.ComponentGroup.Databases" />
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$Target/Id$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="Example.DA.App1.Databases.Group"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="Example.DA.App1.Class.contains.ComponentGroup.Databases"]$</RelationshipClass>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="Example.DA.App1.DatabasesGroup.contains.Databases.Discovery" Target="Example.DA.App1.Databases.Group" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="Example.DA.App1.Databases.Group" />
+          <DiscoveryRelationship TypeID="Example.DA.App1.DatabasesGroup.contains.Databases" />
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$Target/Id$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="MSCL!Microsoft.SQLServer.Core.Database"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="Example.DA.App1.DatabasesGroup.contains.Databases"]$</RelationshipClass>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Property>$MPElement[Name="MSCL!Microsoft.SQLServer.Core.Database"]/DatabaseName$</Property>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value>Test_DB</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+    <Monitors>
+      <UnitMonitor ID="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler" Accessibility="Public" Enabled="true" Target="Example.DA.App1.ApplicationServer.Class" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Microsoft.Windows.CheckNTServiceStateWithBusinessHoursMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler.AlertMessage">
+          <AlertOnState>Error</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Target/Host/Property[Type='Windows!Microsoft.Windows.Computer']/PrincipalName$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" />
+          <OperationalState ID="NotRunning" MonitorTypeStateID="NotRunning" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <ComputerName>$Target/Host/Property[Type='Windows!Microsoft.Windows.Computer']/PrincipalName$</ComputerName>
+          <ServiceName>Spooler</ServiceName>
+          <CheckStartupType>False</CheckStartupType>
+          <From>08:30</From>
+          <To>16:00</To>
+          <Days>127</Days>
+        </Configuration>
+      </UnitMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DR.ComponentGroup.ApplicationServersToGroup" Accessibility="Public" Enabled="true" Target="Example.DA.App1.ApplicationServer.Group" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers" MemberMonitor="Health!System.Health.AvailabilityState">
+        <Category>AvailabilityHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DR.DAToApplicationServerComponentGroup" Accessibility="Public" Enabled="true" Target="Example.DA.App1.Class" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup" MemberMonitor="Health!System.Health.AvailabilityState">
+        <Category>AvailabilityHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DR.ComponentGroup.ApplicationServersToGroup.Perf" Accessibility="Public" Enabled="true" Target="Example.DA.App1.ApplicationServer.Group" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers" MemberMonitor="Health!System.Health.PerformanceState">
+        <Category>PerformanceHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DR.DAToApplicationServerComponentGroup.Perf" Accessibility="Public" Enabled="true" Target="Example.DA.App1.Class" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup" MemberMonitor="Health!System.Health.PerformanceState">
+        <Category>PerformanceHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DA.DR.ComponentGroup.DatabasesToGroup" Accessibility="Public" Enabled="true" Target="Example.DA.App1.Databases.Group" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.DatabasesGroup.contains.Databases" MemberMonitor="Health!System.Health.AvailabilityState">
+        <Category>AvailabilityHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DA.DR.DAToComponentGroup" Accessibility="Public" Enabled="true" Target="Example.DA.App1.Class" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.Class.contains.ComponentGroup.Databases" MemberMonitor="Health!System.Health.AvailabilityState">
+        <Category>AvailabilityHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DA.DR.ComponentGroup.DatabasesToGroup.Perf" Accessibility="Public" Enabled="true" Target="Example.DA.App1.Databases.Group" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.DatabasesGroup.contains.Databases" MemberMonitor="Health!System.Health.PerformanceState">
+        <Category>PerformanceHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+      <DependencyMonitor ID="Example.DA.App1.DA.DR.DAToComponentGroup.Perf" Accessibility="Public" Enabled="true" Target="Example.DA.App1.Class" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" RelationshipType="Example.DA.App1.Class.contains.ComponentGroup.Databases" MemberMonitor="Health!System.Health.PerformanceState">
+        <Category>PerformanceHealth</Category>
+        <Algorithm>WorstOf</Algorithm>
+      </DependencyMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <Views>
+      <View ID="Example.DA.App1.Views.State.DA.Alert" Accessibility="Public" Target="Example.DA.App1.Class" TypeID="SC!Microsoft.SystemCenter.AlertViewType" Visible="true">
+        <Category>Operations</Category>
+        <Criteria>
+          <ResolutionState>
+            <StateRange Operator="NotEquals">255</StateRange>
+          </ResolutionState>
+        </Criteria>
+      </View>
+    </Views>
+    <Folders>
+      <Folder ID="Example.DA.App1.Folder" Accessibility="Public" ParentFolder="SC!Microsoft.SystemCenter.Monitoring.ViewFolder.Root" />
+    </Folders>
+    <FolderItems>
+      <FolderItem ElementID="Example.DA.App1.Views.State.DA.Alert" Folder="Example.DA.App1.Folder" ID="Example.DA.App1.Views.State.DA.Alert.FolderItem" />
+    </FolderItems>
+    <StringResources>
+      <StringResource ID="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler.AlertMessage" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="Example.DA.App1.DR.ComponentGroup.ApplicationServersToGroup">
+          <Name>Roll up application server health to Component group health - availability</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DR.DAToApplicationServerComponentGroup">
+          <Name>Roll up dapplication server group health to DA - availability</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DR.ComponentGroup.ApplicationServersToGroup.Perf">
+          <Name>Roll up application server health to Component group health - performance</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DR.DAToApplicationServerComponentGroup.Perf">
+          <Name>Roll up application server health to DA - performance</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DA.DR.ComponentGroup.DatabasesToGroup">
+          <Name>Roll up database health to Component group health - availability</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DA.DR.DAToComponentGroup">
+          <Name>Roll up databasegroup health to DA - availability</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DA.DR.ComponentGroup.DatabasesToGroup.Perf">
+          <Name>Roll up database health to Component group health - performance</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DA.DR.DAToComponentGroup.Perf">
+          <Name>Roll up databasegroup health to DA - performance</Name>
+          <Description>Description for new dependency monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler">
+          <Name>Spooler Monitor</Name>
+          <Description>Description for the new unit monitor.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler.AlertMessage">
+          <Name>Spooler Service is Not Running</Name>
+          <Description>The Spooler Service is not running on {0}</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler" SubElementID="Running">
+          <Name>Running</Name>
+          <Description>Running</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler" SubElementID="NotRunning">
+          <Name>NotRunning</Name>
+          <Description>NotRunning</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Views.State.DA.Alert">
+          <Name>App 1 Active Alerts</Name>
+          <Description>Description for the new view</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Folder">
+          <Name>DA - App 1 - Application</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.ApplicationServer.Class">
+          <Name>App 1 - Application Server</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.ApplicationServer.Class" SubElementID="Version">
+          <Name>Version</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.ApplicationServer.Group">
+          <Name>App 1 - Application Server Group</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="App_Wader2.WindowsComputerHostsApplication">
+          <Name>Windows Computer Hosts Wader 2 Application Server Relationship</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Databases.Group">
+          <Name>App 1 - Databases Group</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.ApplicationServer.Class.Discovery">
+          <Name>Discover Application Server - DA - App1</Name>
+          <Description>Description for the new discovery.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers.Discovery">
+          <Name>DA - App 1 - Application Server component group populator Contains Application Servers</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Class.Contains.ApplicationServersComponentGroup.Discovery">
+          <Name>DA - App 1 - DA Contains Application Server Group</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Class.Contains.DatabasesGroupComponentGroup.Discovery">
+          <Name>DA - App 1 - DA Contains Databases Group</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DatabasesGroup.contains.Databases.Discovery">
+          <Name>DA - App 1 - Database component group populator Contains SQL Databases</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Class">
+          <Name>App 1</Name>
+          <Description>Example Distributed Application - App1</Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers">
+          <Name>DA - App 1 - Application Servers Group contains Application Servers</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup">
+          <Name>DA - App 1 - DA contains Application Servers Group</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.Class.contains.ComponentGroup.Databases">
+          <Name>DA - App 1 - DA contains Databases Group</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="Example.DA.App1.DatabasesGroup.contains.Databases">
+          <Name>DA - App 1 - Databases Group contains Databases</Name>
+          <Description></Description>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles>
+        <KnowledgeArticle ElementID="Example.DA.App1.UnitMonitor.Service.BusinessHours.Spooler" Visible="true">
+          <MamlContent>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Summary</maml:title>
+              <maml:para>Monitors the status of the Spooler Service during specified business hours.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Causes</maml:title>
+              <maml:para>The service stops when it is overwhelmed with work.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Resolutions</maml:title>
+              <maml:para>Start the service and grab some coffee.</maml:para>
+            </maml:section>
+          </MamlContent>
+        </KnowledgeArticle>
+      </KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPack>

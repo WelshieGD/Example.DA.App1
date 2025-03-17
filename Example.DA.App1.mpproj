@@ -66,6 +66,7 @@
     <Folder Include="HealthModel" />
     <Folder Include="HealthModel\AppServerGroupRollUpToDA" />
     <Folder Include="HealthModel\ServiceMonitor" />
+    <Folder Include="XML" />
     <Folder Include="Presentation" />
     <Folder Include="ServiceModel" />
     <Folder Include="ReferencedMPs" />
@@ -134,6 +135,9 @@
     <Compile Include="ServiceModel\Relationships\DatabaseGroupContainsDatabases.mpx">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="XML\Example.DA.App1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VSAC\Microsoft.SystemCenter.OperationsManager.targets" />
 </Project>
