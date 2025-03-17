@@ -1,0 +1,23 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<TypeDefinitions>
+		<EntityTypes>
+			<RelationshipTypes>
+				<!-- Application Servers Group Contains Application Servers-->
+				<RelationshipType ID="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers" Base="System!System.Containment" Abstract="false" Accessibility="Public">
+					<Source ID="Source" Type="Example.DA.App1.ApplicationServer.Group"/>
+					<Target ID="Target" Type="Example.DA.App1.ApplicationServer.Class"/>
+				</RelationshipType>
+			</RelationshipTypes>
+		</EntityTypes>
+	</TypeDefinitions>
+	<LanguagePacks>
+		<LanguagePack ID="ENU" IsDefault="true">
+			<DisplayStrings>
+				<DisplayString ElementID="Example.DA.App1.ApplicationServersGroup.contains.ApplicationServers">
+					<Name>DA - App 1 - Application Servers Group contains Application Servers</Name>
+					<Description></Description>
+				</DisplayString>
+			</DisplayStrings>
+		</LanguagePack>
+	</LanguagePacks>
+</ManagementPackFragment>

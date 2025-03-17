@@ -1,0 +1,34 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Monitoring>
+		<Discoveries>
+			<!-- DA Contains Application Server Component Group -->
+			<Discovery ID="Example.DA.App1.Class.Contains.ApplicationServersComponentGroup.Discovery" Target="Example.DA.App1.Class" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+				<Category>Discovery</Category>
+				<DiscoveryTypes>
+					<DiscoveryClass TypeID="Example.DA.App1.ApplicationServer.Group" />
+					<DiscoveryRelationship TypeID="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup" />
+				</DiscoveryTypes>
+				<DataSource ID="DS" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+					<RuleId>$MPElement$</RuleId>
+					<GroupInstanceId>$Target/Id$</GroupInstanceId>
+					<MembershipRules>
+						<MembershipRule>
+							<MonitoringClass>$MPElement[Name="Example.DA.App1.ApplicationServer.Group"]$</MonitoringClass>
+							<RelationshipClass>$MPElement[Name="Example.DA.App1.Class.contains.ComponentGroup.ApplicationServersGroup"]$</RelationshipClass>
+						</MembershipRule>
+					</MembershipRules>
+				</DataSource>
+			</Discovery>
+		</Discoveries>
+	</Monitoring>
+	<LanguagePacks>
+		<LanguagePack ID="ENU" IsDefault="true">
+			<DisplayStrings>
+				<DisplayString ElementID="Example.DA.App1.Class.Contains.ApplicationServersComponentGroup.Discovery">
+					<Name>DA - App 1 - DA Contains Application Server Group</Name>
+					<Description></Description>
+				</DisplayString>
+			</DisplayStrings>
+		</LanguagePack>
+	</LanguagePacks>
+</ManagementPackFragment>

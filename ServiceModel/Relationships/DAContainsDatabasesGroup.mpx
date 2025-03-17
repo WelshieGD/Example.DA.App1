@@ -1,0 +1,25 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<TypeDefinitions>
+		<EntityTypes>
+			<RelationshipTypes>
+				<!-- DA Contains Computer Group Containment Relationships - DA to Database Group to Databases -->
+				<RelationshipType ID="Example.DA.App1.Class.contains.ComponentGroup.Databases" Base="System!System.Containment" Abstract="false" Accessibility="Public">
+					<Source ID="Source" Type="Example.DA.App1.Class"/>
+					<Target ID="Target" Type="Example.DA.App1.Databases.Group"/>
+				</RelationshipType>
+			</RelationshipTypes>
+		</EntityTypes>
+	</TypeDefinitions>
+	<LanguagePacks>
+		<LanguagePack ID="ENU" IsDefault="true">
+			<DisplayStrings>
+				<!-- DA Contains Computer Group Containment Relationships-->
+				<DisplayString ElementID="Example.DA.App1.Class.contains.ComponentGroup.Databases">
+					<Name>DA - App 1 - DA contains Databases Group</Name>
+					<Description></Description>
+				</DisplayString>
+			</DisplayStrings>
+		</LanguagePack>
+	</LanguagePacks>
+</ManagementPackFragment>
+

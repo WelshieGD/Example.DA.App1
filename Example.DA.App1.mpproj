@@ -1,0 +1,139 @@
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{14328ecb-0215-45f2-b16f-b47ca52224a7}</ProjectGuid>
+    <RootNamespace>Example.DA.App1</RootNamespace>
+    <Name>Example Distributed Application - App 1</Name>
+    <ManagementPackName>Example.DA.App1</ManagementPackName>
+    <Version>1.0.0.10</Version>
+    <MpFrameworkVersion>v7.0.3</MpFrameworkVersion>
+    <MpFrameworkProfile>OM</MpFrameworkProfile>
+    <ProductVersion>1.1.0.0</ProductVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <GenerateSealed>True</GenerateSealed>
+    <Company>Homelab</Company>
+    <Copyright>Copyright (c) Homelab. All rights reserved.</Copyright>
+    <DelaySigning>False</DelaySigning>
+    <AssemblyOriginatorKeyFile>C:\SCOMKey\SCOMKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+    <DelaySigning>false</DelaySigning>
+    <Company>MyCompany</Company>
+    <Copyright>Copyright (c) MyCompany. All rights reserved.</Copyright>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <ManagementPackReference Include="Microsoft.SQLServer.Core.Library">
+      <HintPath>C:\Program Files (x86)\System Center Management Packs\Microsoft System Center Management Pack for SQL Server on Windows\7.8.4\Microsoft.SQLServer.Core.Library.mpb</HintPath>
+      <Alias>MSCL</Alias>
+      <MinVersion>7.8.4.0</MinVersion>
+      <PackageToBundle>False</PackageToBundle>
+    </ManagementPackReference>
+    <ManagementPackReference Include="Microsoft.SystemCenter.InstanceGroup.Library">
+      <HintPath>C:\Program Files (x86)\System Center Visual Studio 2022 Authoring Extensions\References\OM2016\Microsoft.SystemCenter.InstanceGroup.Library.mp</HintPath>
+      <Alias>MSIL</Alias>
+      <MinVersion>7.5.8501.0</MinVersion>
+      <PackageToBundle>False</PackageToBundle>
+    </ManagementPackReference>
+    <ManagementPackReference Include="Microsoft.SystemCenter.Library">
+      <Alias>SC</Alias>
+      <PackageToBundle>false</PackageToBundle>
+    </ManagementPackReference>
+    <ManagementPackReference Include="Microsoft.Windows.Library">
+      <Alias>Windows</Alias>
+      <PackageToBundle>false</PackageToBundle>
+    </ManagementPackReference>
+    <ManagementPackReference Include="System.Health.Library">
+      <Alias>Health</Alias>
+      <PackageToBundle>false</PackageToBundle>
+    </ManagementPackReference>
+    <ManagementPackReference Include="System.Library">
+      <Alias>System</Alias>
+      <PackageToBundle>false</PackageToBundle>
+    </ManagementPackReference>
+    <ManagementPackReference Include="Microsoft.SystemCenter.Visualization.Library">
+      <Alias>Visualization</Alias>
+      <PackageToBundle>false</PackageToBundle>
+    </ManagementPackReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HealthModel" />
+    <Folder Include="HealthModel\AppServerGroupRollUpToDA" />
+    <Folder Include="HealthModel\ServiceMonitor" />
+    <Folder Include="Presentation" />
+    <Folder Include="ServiceModel" />
+    <Folder Include="ReferencedMPs" />
+    <Folder Include="ServiceModel\DAClass" />
+    <Folder Include="ServiceModel\ComponentGroupClasses" />
+    <Folder Include="ServiceModel\ComponentGroupPopulators" />
+    <Folder Include="ServiceModel\Relationships" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ReferencedMPs\Microsoft.SystemCenter.InstanceGroup.Library.mp">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="HealthModel\AppServerGroupRollUpToDA\RollUpAppServerGroupToDA.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HealthModel\AppServerGroupRollUpToDA\RollUpDatabasesToDA.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HealthModel\ServiceMonitor\Module.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HealthModel\ServiceMonitor\ServiceMonitor.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation\AlertView.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation\Folder.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\ComponentGroupClasses\ApplicationClass.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\ComponentGroupClasses\DatabaseClass.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\ComponentGroupPopulators\ApplicationServerDiscovery.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\ComponentGroupPopulators\ApplicationServerGroupDiscoveryPopulator.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\ComponentGroupPopulators\DAContainApplicationServerGroupPopulator.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\ComponentGroupPopulators\DAContainsDatabasesGroup.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\ComponentGroupPopulators\DatabaseServerGroupContainsDatabasePopulator.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\DAClass\DAClass.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\Relationships\ApplicationServerGroupContainsApplicationServers.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\Relationships\DAContainsApplicationServerGroup.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\Relationships\DAContainsDatabasesGroup.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceModel\Relationships\DatabaseGroupContainsDatabases.mpx">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VSAC\Microsoft.SystemCenter.OperationsManager.targets" />
+</Project>

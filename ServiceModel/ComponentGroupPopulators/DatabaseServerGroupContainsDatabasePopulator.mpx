@@ -1,0 +1,46 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Monitoring>
+		<Discoveries>
+			<Discovery ID="Example.DA.App1.DatabasesGroup.contains.Databases.Discovery" Target="Example.DA.App1.Databases.Group" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+				<Category>Discovery</Category>
+				<DiscoveryTypes>
+					<DiscoveryClass TypeID="Example.DA.App1.Databases.Group" />
+					<DiscoveryRelationship TypeID="Example.DA.App1.DatabasesGroup.contains.Databases" />
+				</DiscoveryTypes>
+				<DataSource ID="DS" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+					<RuleId>$MPElement$</RuleId>
+					<GroupInstanceId>$Target/Id$</GroupInstanceId>
+					<MembershipRules>
+						<MembershipRule>
+							<MonitoringClass>$MPElement[Name="MSCL!Microsoft.SQLServer.Core.Database"]$</MonitoringClass>
+							<RelationshipClass>$MPElement[Name="Example.DA.App1.DatabasesGroup.contains.Databases"]$</RelationshipClass>
+							<Expression>
+										<SimpleExpression>
+											<ValueExpression>
+												<Property>$MPElement[Name="MSCL!Microsoft.SQLServer.Core.Database"]/DatabaseName$</Property>
+											</ValueExpression>
+											<Operator>Equal</Operator>
+											<ValueExpression>
+												<Value>Test_DB</Value>
+											</ValueExpression>
+										</SimpleExpression>
+									</Expression>
+						</MembershipRule>
+					</MembershipRules>
+				</DataSource>
+			</Discovery>
+
+		</Discoveries>
+	</Monitoring>
+	<LanguagePacks>
+		<LanguagePack ID="ENU" IsDefault="true">
+			<DisplayStrings>
+				<DisplayString ElementID="Example.DA.App1.DatabasesGroup.contains.Databases.Discovery">
+					<Name>DA - App 1 - Database component group populator Contains SQL Databases</Name>
+					<Description></Description>
+				</DisplayString>
+
+			</DisplayStrings>
+		</LanguagePack>
+	</LanguagePacks>
+</ManagementPackFragment>
